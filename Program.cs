@@ -10,10 +10,12 @@ namespace MassEnvelopeEditor
         {
             UtauPlugin utauPlugin = new UtauPlugin(args[0]);
             utauPlugin.Input();
+
             foreach (Note note in utauPlugin.note)
             {
-                note.SetNoteNum(note.GetNoteNum() + 1);
+                note.SetEnvelope((utauPlugin.note[0]).GetEnvelope());
             }
+
             utauPlugin.Output();
         }
     }
