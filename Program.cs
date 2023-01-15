@@ -6,28 +6,31 @@ namespace MassEnvelopeEditor
 {
     class Program
     {
+
+        static bool isNoteFirstInRegion = true;
+
         static void Main(string[] args)
         {
             UtauPlugin utauPlugin = new UtauPlugin(args[0]);
             utauPlugin.Input();
 
-            Note firstNote = new Note();
-            bool copiedEnvelope = false;
+            string firstEnvelope = null;
+
+            /* Iterating through each note, selected or unselected, in the .ust. */
 
             foreach (Note note in utauPlugin.note)
             {
-                /* if the note is part of a selected range */
 
                 if (IsSelected(note) == true)
                 {
-                    if (copiedEnvelope == false)
+                    if (firstEnvelope == null)
                     {
-                        firstNote = note.Next;
-                        copiedEnvelope = true;
-                    } else
-                    {
-                        note.SetEnvelope(firstNote.GetEnvelope());
+                        firstEnvelope = note.GetEnvelope();
                     }
+
+                    /* This will not reset preutterance and overlap values. */
+
+                    note.SetEnvelope(firstEnvelope);
                 }
             }
 
@@ -35,11 +38,14 @@ namespace MassEnvelopeEditor
         }
         static bool IsSelected(Note note)
         {
-            if (note.GetRegion() != null)
+            /* The selected region includes the unselected note immediately before the selected region.*/
+
+            if ((note.GetRegion() != null) && (isNoteFirstInRegion == false))
             {
                 return true;
             } else
             {
+                isNoteFirstInRegion = false;
                 return false;
             }
 
